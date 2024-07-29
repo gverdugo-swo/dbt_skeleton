@@ -36,11 +36,11 @@ vars:
 models:
   dbt_medallion:
     # Config indicated by + and applies to all files under models/example/
-    bronze:
-      +materialized: view
-      +schema: bronze
+    gold:
+      +materialized: table
+      +schema: gold
     silver:
-      +materialized: view
+      +materialized: table
       +schema: silver
 
 seeds:
