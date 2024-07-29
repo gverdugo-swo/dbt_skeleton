@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "ip-trabajo-gverdugo",
+  "private_key_id": "9c656f387fa8d43fee1f0e62228bae8989a131dc",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDixe4xzLZENAIW\n5JIr/enn0Lz6PXjhpPmZjM1K3FRLj4NYaltwtTJ5TNChqt6Uev3V24QhFsQmEzcF\nGYvQ4NMi1ebda96as01BB27nQtkmevLfBH7p72CN0WaPZHWVwxp8XETI86cXIYL3\nuYDyw2gBHYJoZcW1Zy/qSU5PjGBu/hs2LXGwMVSHPGKpPoaDtixhkDZy7x9/urUV\nR4gUN2w0lKkteer8QPEp5dXDEbZ8oN/216XTptQ9du5zzVL9RmvY6c3vsM68LumK\n4ar7eGMvlZeWnX8RdH+tjKejoG9EQ+y5jrJ/vFU07mVQTdDxAiPrQj8eOv7STREl\nMlXkx9XtAgMBAAECggEAX94QE/J4bT3VUks/tiRKEYuPkHSTWUTulejN0uNxKV5a\nxvJzhKK9W0VLf8TmArw5+gIqifh/ZJ9D576EeoHJEFWAG0QiX6EEPEUBr/d1KIza\nhsh2RLxDQ8DuDBmKkgzgcglptNA4Z5Fttf8wkbBlE++fNTYtDkK4oWFrHzr3e4Pa\nAtNmDgHSvNLidtJUOtBmDyJQckZaMAij6gbn6U9EZBzdLF6bd4kGh+eYjpW99F9a\nALvv+rdBuyadJJhN4kAt67aqnyQSflxnO1QnqGVyimfylUX5NTrlb3w90cgFA2HU\n3KnjpAj0il9Zsp8eDcPUDOvJrwFbwi5ggUhh9CN12wKBgQD+l6NNemjEelpS1yCT\nk+n/SVfgUheNXZxL/saFrr42iv3zUQ9eOw6Im9ErSwNiVz3/BC6uyo8PiyhSZDCU\nhEjU0F1QMHRPKmFpMP6kg1WFcPCX7hsRJJyoRrW1eNdJfVz2ApmipIzaH4qdFK8Z\nkvyb0XFKI8ughFQwZ2pJ+Y3AawKBgQDkBup9DKJQ3sPOp0lj+5F09EEeTJO55hs2\nw9zXk3bRt/kdPIdObLXtC0N+qjVJ+e/N6s+n2y53jWBE7OqZz+8mnFxnJcyLcr93\nAwzJKBDNb/hlD6C6SHKs3vMGDS6fpREMxB4NdYe+3+2KkwhRsODPDYYbZUlX2Zxv\nJbuijx95BwKBgQD15/eGzXZGWLvHihzgDp2Uw/3KIOC43bMqwCJ2WytEuYnCrAgB\nB1/pWT925pSVNxkdqaeBkwsNg2bl9fnqab+DNuL6omKlWJUQKo+6zVQceNManJSu\nQUPDUdEPQHIJfLn+sNI+g1u9D3wubx0VwaCWzHz1lI+JMmey/SBv5UgikwKBgCSa\nV5mrJYMFvzi08bry7u5vJuTONghpP4US+6g/K5uOhJaE2NNl7+4VGMiEWfl9/Vh4\nkMzJCjR2pTVrMl1uW10/TDXig2r/CGz6OFsx60CO8LiIQaylZIMLZsdZ5loKDSqX\ncJuIejnRiDfuUi+KzQtviE9tetB3Rf0xeWUmxE6RAoGBAIlrRzrPTE+GRMcuz8t7\njocZVzuoOretXR2vfk+JGy3yRsofjd9OMXqPOg4hEAFgFp8cLnPcf1KpUVZcfIiJ\n3CydJUks39NwGDPL9o/KdhiWH14/5Ol7QQuHW0xR8JoG3fhMSgWIQ2l1fIBU+BrL\nPJcAQ1YyK77B6gF27FX1mMt6\n-----END PRIVATE KEY-----\n",
+  "client_email": "dbt-runner@ip-trabajo-gverdugo.iam.gserviceaccount.com",
+  "client_id": "118249991762415833890",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/dbt-runner%40ip-trabajo-gverdugo.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
