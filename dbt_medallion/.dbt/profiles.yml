@@ -4,7 +4,7 @@ dbt_medallion:
       dataset: dbt
       job_execution_timeout_seconds: 300
       job_retries: 1
-      keyfile: ../dbt_runner.json
+      keyfile: /home/runner/work/dbt_skeleton/dbt_skeleton/dbt_medallion/dbt_runner.json
       location: EU
       method: service-account
       priority: interactive
