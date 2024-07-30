@@ -53,16 +53,7 @@ jobs:
           cd $GITHUB_WORKSPACE/main_branch_code/dbt_medallion
           dbt compile --target-path=$GITHUB_WORKSPACE/main-run-artifacts
 
-      # Listar modelos modificados
-      - name: List modified dbt models
-        run: |
-          cd $GITHUB_WORKSPACE/dbt_medallion
-          dbt ls --state $GITHUB_WORKSPACE/main-run-artifacts --select state:modified+
 
-      # Formatear archivos SQL
-      - name: Format SQL files with SQLFluff
-        run: |
-          sqlfluff fix dbt_medallion/models/**/*.sql --force
           
       # Ejecutar modelos modificados
       - name: Run modified dbt models
@@ -75,7 +66,10 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE/dbt_medallion
           dbt test --project-dir . --profiles-dir ~/.dbt --select state:modified+ --state $GITHUB_WORKSPACE/main-run-artifacts
-
+      # Formatear archivos SQL
+      - name: Format SQL files with SQLFluff
+        run: |
+          sqlfluff fix dbt_medallion/models/**/*.sql --force
       # Notificar en caso de fallo
       - name: Notify on failure
         if: failure()
