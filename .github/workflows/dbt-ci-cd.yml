@@ -68,16 +68,7 @@ jobs:
       # Formatear archivos SQL con sqlfmt
       - name: Format SQL files with sqlfmt
         run: |
-          for file in $(find dbt_medallion/models -name "*.sql"); do
-            echo "Formatting $file"
-            sqlfmt "$file" - > formatted.sql
-            if ! cmp -s "$file" formatted.sql; then
-              mv formatted.sql "$file"
-              echo "$file has been formatted."
-            else
-              echo "$file is already formatted."
-            fi
-          done
+          sqlfmt $GITHUB_WORKSPACE/dbt_medallion/models/**/*.sql
 
       # Notificar en caso de fallo
       - name: Notify on failure
