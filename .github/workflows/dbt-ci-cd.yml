@@ -24,7 +24,7 @@ jobs:
 
       - name: Install SQLFluff and dbt
         run: |
-          pip install sqlfluff
+          pip install sqlfluff sqlfluff-templater-dbt
           pip install dbt-core dbt-bigquery  # Adjust this line based on your dbt adapter
 
       - name: Lint SQL with SQLFluff
