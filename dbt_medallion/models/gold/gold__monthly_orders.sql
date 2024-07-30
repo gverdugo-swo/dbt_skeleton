@@ -26,5 +26,5 @@ FINAL AS (
 SELECT
     *
 FROM
-    FINAL
+        FINAL
 
