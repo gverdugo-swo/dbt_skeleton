@@ -3,6 +3,7 @@ dialect = bigquery  # Replace with your SQL dialect (e.g., postgres, redshift)
 templater = dbt
 
 [sqlfluff:templater:dbt]
-project_dir = dbt_medallion
-profiles_dir = dbt_medallion/.dbt
+project_dir = ./dbt_medallion
+profiles_dir = ./dbt_medallion/.dbt
 profile = dbt_medallion  # The dbt profile to use
+target = dev
