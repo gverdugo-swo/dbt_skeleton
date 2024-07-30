@@ -25,7 +25,7 @@ jobs:
       - name: Install dbt and SQLFluff
         run: |
           pip install dbt-core dbt-bigquery  # Ajusta según tu adaptador dbt
-          pip install sqlfluff sqlfluff-templater-dbt diff-quality
+          pip install sqlfluff sqlfluff-templater-dbt
 
       - name: Set up dbt profiles
         run: |
