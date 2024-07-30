@@ -4,11 +4,11 @@ import sys
 
 from dotenv import load_dotenv
 
+# Add the parent directory to the system path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from common.dbt import ModelGenerator
+from common.dbt import SourcesGenerator
 from common.google.drive import GoogleDriveService, GoogleSheetsClient
-from common.dbt.templates import CONFIG, DDP_QUERY
 
 # Load environment variables from a .env file
 load_dotenv()
@@ -25,22 +25,26 @@ def main():
 
     # Google Sheets details
     SPREADSHEET_ID = os.getenv("CONFIG_SPREADSHEET_ID")
-    RANGE_NAME = os.getenv("TABLE_INFO_RANGE")
+    TABLES_RANGE = os.getenv("TABLE_INFO_RANGE")
+    FIELDS_RANGE = os.getenv("FIELD_INFO_RANGE")
     DBT_PROJECT_FOLDER = os.getenv("DBT_PROJECT_FOLDER")
 
-    # Output directory for generated models
-    OUTPUT_DIR = f"{DBT_PROJECT_FOLDER}/models/silver/"
-    PREFIX = "silver__"
+
+    # Output path for sources.yml
+    OUTPUT_PATH = f"{DBT_PROJECT_FOLDER}/models/sources.yml"
 
     # Initialize services
     drive_service = GoogleDriveService(CREDENTIALS_JSON_PATH)
     sheets_client = GoogleSheetsClient(drive_service)
-    model_generator = ModelGenerator(
-        sheets_client, DDP_QUERY, OUTPUT_DIR, PREFIX, CONFIG
+    sources_generator = SourcesGenerator(sheets_client)
+
+    # Fetch tables and fields data
+    sources_data = sources_generator.fetch_tables_and_fields(
+        SPREADSHEET_ID, TABLES_RANGE, SPREADSHEET_ID, FIELDS_RANGE
     )
 
-    # Generate models
-    model_generator.generate_models(SPREADSHEET_ID, RANGE_NAME)
+    # Update sources.yml
+    sources_generator.update_sources_yml(sources_data, OUTPUT_PATH)
 
 
 if __name__ == "__main__":
