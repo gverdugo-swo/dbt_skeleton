@@ -1,0 +1,59 @@
+name: dbt CI with SQLFluff
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  lint_and_test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+
+      - name: Install SQLFluff and dbt
+        run: |
+          pip install sqlfluff
+          pip install dbt-core dbt-bigquery  # Adjust this line based on your dbt adapter
+
+      - name: Lint SQL with SQLFluff
+        run: |
+          sqlfluff lint dbt_medallion/models/**/*.sql
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Fix SQL with SQLFluff (optional)
+        if: ${{ always() }}
+        run: |
+          sqlfluff fix dbt_medallion/models/**/*.sql
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Checkout code from main branch for state
+        uses: actions/checkout@v2
+        with:
+          ref: main
+          path: main_branch_code
+
+      - name: Run modified dbt models
+        run: |
+          dbt run --select state:modified+ --defer --state main_branch_code/target
+
+      - name: Run modified dbt tests
+        run: dbt test --select state:modified+ --state main_branch_code/target
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "Linting or testing failed. Please check the logs and fix issues."
