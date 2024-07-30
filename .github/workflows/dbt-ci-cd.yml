@@ -29,7 +29,7 @@ jobs:
 
       - name: Lint SQL with SQLFluff
         run: |
-          sqlfluff lint dbt_medallion/models/**/*.sql
+          sqlfluff lint dbt_medallion/models/**/*.sql --dialect bigquery
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
