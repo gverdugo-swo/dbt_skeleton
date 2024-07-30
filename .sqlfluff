@@ -5,4 +5,4 @@ templater = dbt
 [sqlfluff:templater:dbt]
 project_dir = ./dbt_medallion
 profiles_dir = ./dbt_medallion/.dbt
-profile = dbt_medallion  # The dbt profile to use
+profile = default  # The dbt profile to use
