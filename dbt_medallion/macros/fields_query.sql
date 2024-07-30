@@ -33,8 +33,8 @@
 
 {% macro standard_field_transformation(field) %}
 
-    {% set to_field = field.field if field.name is not none else field.field %}
-
+    {% set to_field = field.name if field.name is not none else field.field %}
+    
     {% if field.type == "DATE" or field.type == "DATETIME" or field.type == "TIMESTAMP" or field.type == "TIME" %}
         {% set conversion_func = get_date_field_conversion_func(field) %}
         {{ return(conversion_func ~ "('"~ field.format ~"', " ~ '`' ~ field.field ~ '`' ~ ") as `" ~ to_field ~ "`" ) }}
