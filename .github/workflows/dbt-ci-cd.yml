@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  lint_and_test:
+  setup:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -32,18 +32,27 @@ jobs:
           mkdir -p ~/.dbt
           cp dbt_medallion/.dbt/profiles.yml ~/.dbt/profiles.yml
 
-      - name: Lint SQL with SQLFluff
-        run: |
-          sqlfluff lint dbt_medallion/models/**/*.sql --dialect bigquery
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  format:
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      - name: Fix SQL with SQLFluff (optional)
-        if: ${{ always() }}
+      - name: Format SQL with SQLFluff
         run: |
           sqlfluff fix dbt_medallion/models/**/*.sql --dialect bigquery
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  test:
+    runs-on: ubuntu-latest
+    needs: format
+    steps:
+      - name: Checkout code from PR branch
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Checkout code from main branch for state
         uses: actions/checkout@v2
@@ -61,4 +70,4 @@ jobs:
       - name: Notify on failure
         if: failure()
         run: |
-          echo "Linting or testing failed. Please check the logs and fix issues."
+          echo "Formatting or testing failed. Please check the logs and fix issues."
