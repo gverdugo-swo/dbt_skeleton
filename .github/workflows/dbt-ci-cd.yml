@@ -1,4 +1,4 @@
-name: dbt CI with SQLFluff
+name: dbt CI with State Comparison and SQLFluff
 
 on:
   pull_request:
@@ -16,50 +16,67 @@ jobs:
         uses: actions/checkout@v2
         with:
           ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.8'
+          python-version: '3.11'
 
-      - name: Install SQLFluff and dbt
+      - name: Install dbt and SQLFluff
         run: |
+          pip install dbt-core dbt-bigquery  # Ajusta según tu adaptador dbt
           pip install sqlfluff sqlfluff-templater-dbt
-          pip install dbt-core dbt-bigquery  # Adjust this line based on your dbt adapter
 
       - name: Set up dbt profiles
         run: |
           mkdir -p ~/.dbt
           cp dbt_medallion/.dbt/profiles.yml ~/.dbt/profiles.yml
 
+      # Cambiar a la rama main para obtener el estado actual
       - name: Checkout main branch code for state
+        if: github.ref != 'refs/heads/main'
         uses: actions/checkout@v2
         with:
           ref: main
           path: main_branch_code
+          fetch-depth: 0
 
-      - name: Generate manifest.json for state comparison in main
+      # Verificar la existencia de la rama main
+      - name: List branches for debugging
+        run: git branch -a
+
+      # Generar manifest.json para la rama main
+      - name: Generate manifest.json for main branch
+        if: github.ref != 'refs/heads/main'
         run: |
           cd $GITHUB_WORKSPACE/main_branch_code/dbt_medallion
-          dbt compile --target-path=$GITHUB_WORKSPACE/main_branch_code/prod-run-artifacts
+          dbt compile --target-path=$GITHUB_WORKSPACE/main-run-artifacts
 
-      - name: Format SQL with SQLFluff
+      # Listar modelos modificados
+      - name: List modified dbt models
         run: |
-          sqlfluff fix $GITHUB_WORKSPACE/dbt_medallion/models/**/*.sql --dialect bigquery
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          cd $GITHUB_WORKSPACE/dbt_medallion
+          dbt ls --state $GITHUB_WORKSPACE/main-run-artifacts --select state:modified+
 
+      # Formatear archivos SQL
+      - name: Format SQL files with SQLFluff
+        run: |
+          sqlfluff fix dbt_medallion/models/**/*.sql --force
+          
+      # Ejecutar modelos modificados
       - name: Run modified dbt models
         run: |
           cd $GITHUB_WORKSPACE/dbt_medallion
-          dbt compile --target-path=$GITHUB_WORKSPACE/prod-run-artifacts
-          dbt run --project-dir . --profiles-dir ~/.dbt --select state:modified+ --defer --state $GITHUB_WORKSPACE/main_branch_code/prod-run-artifacts
+          dbt run --project-dir . --profiles-dir ~/.dbt --select state:modified+ --defer --state $GITHUB_WORKSPACE/main-run-artifacts
 
+      # Ejecutar tests modificados en la rama de PR
       - name: Run modified dbt tests
         run: |
           cd $GITHUB_WORKSPACE/dbt_medallion
-          dbt test --project-dir . --profiles-dir ~/.dbt --select state:modified+ --state $GITHUB_WORKSPACE/main_branch_code/prod-run-artifacts
+          dbt test --project-dir . --profiles-dir ~/.dbt --select state:modified+ --state $GITHUB_WORKSPACE/main-run-artifacts
 
+      # Notificar en caso de fallo
       - name: Notify on failure
         if: failure()
         run: |
