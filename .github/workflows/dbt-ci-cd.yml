@@ -66,6 +66,11 @@ jobs:
       - name: Format SQL files with sqlfmt
         run: |
           sqlfmt $GITHUB_WORKSPACE/dbt_medallion/models/**/*.sql
+      
+      # Remover el directorio main_branch_code del índice
+      - name: Remove main_branch_code from index
+        run: |
+          git rm -r --cached main_branch_code || echo "main_branch_code not in index"
 
       # Comprobar si hay cambios y realizar commit y push si los hay
       - name: Check for changes and commit
