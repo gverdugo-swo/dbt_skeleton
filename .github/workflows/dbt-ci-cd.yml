@@ -38,7 +38,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Checkout code from main branch for state
+      - name: Checkout main branch code for state
         uses: actions/checkout@v2
         with:
           ref: main
@@ -46,10 +46,13 @@ jobs:
 
       - name: Run modified dbt models
         run: |
-          dbt run --select state:modified+ --defer --state main_branch_code/target
+          cd dbt_medallion
+          dbt run --project-dir . --profiles-dir ~/.dbt --select state:modified+ --defer --state ../main_branch_code/dbt_medallion/target
 
       - name: Run modified dbt tests
-        run: dbt test --select state:modified+ --state main_branch_code/target
+        run: |
+          cd dbt_medallion
+          dbt test --project-dir . --profiles-dir ~/.dbt --select state:modified+ --state ../main_branch_code/dbt_medallion/target
 
       - name: Notify on failure
         if: failure()
