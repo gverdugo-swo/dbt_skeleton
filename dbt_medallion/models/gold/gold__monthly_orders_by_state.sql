@@ -1,35 +1,17 @@
-WITH orders AS (
-    SELECT
-        order_id,
-        order_date,
-        country,
-        `state`,
-        city
-    FROM
-        {{ ref("silver__sales") }}
-),
-monthly_orders_by_country AS (
-    SELECT
-        DATE_TRUNC(
-            order_date,
-            MONTH
-        ) AS `month`,
-        country,
-        `state`,
-        COUNT(order_id) AS orders
-    FROM
-        orders
-    GROUP BY
-        ALL
-),
-FINAL AS (
-    SELECT
-        *
-    FROM
-        monthly_orders_by_country
-)
-SELECT
-    *
-FROM
-    FINAL
-
+with
+    orders as (
+        select order_id, order_date, country, `state`, city
+        from {{ ref("silver__sales") }}
+    ),
+    monthly_orders_by_country as (
+        select
+            date_trunc(order_date, month) as `month`,
+            country,
+            `state`,
+            count(order_id) as orders
+        from orders
+        group by all
+    ),
+    final as (select * from monthly_orders_by_country)
+select *
+from final
