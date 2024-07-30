@@ -25,7 +25,7 @@ jobs:
       - name: Install SQLFluff and dbt
         run: |
           pip install sqlfluff sqlfluff-templater-dbt
-          pip install dbt-core dbt-bigquery  # Adjust this line based on your dbt adapter
+          pip install dbt-core dbt-bigquery  # Adjust based on your dbt adapter
 
       - name: Set up dbt profiles
         run: |
@@ -41,7 +41,9 @@ jobs:
       - name: Generate manifest.json for state comparison
         run: |
           cd main_branch_code/dbt_medallion
-          dbt compile --target-path prod-run-artifacts
+          dbt compile --target-path=prod-run-artifacts
+        env:
+          DBT_PROFILES_DIR: ~/.dbt
 
       - name: Format SQL with SQLFluff
         run: |
@@ -52,13 +54,13 @@ jobs:
       - name: Run modified dbt models
         run: |
           cd dbt_medallion
-          dbt compile
-          dbt run --project-dir . --profiles-dir ~/.dbt --select state:modified+ --defer --state ../main_branch_code/prod-run-artifacts
+          dbt compile --target-path=target
+          dbt run --project-dir . --profiles-dir ~/.dbt --select state:modified+ --defer --state ../main_branch_code/dbt_medallion/prod-run-artifacts
 
       - name: Run modified dbt tests
         run: |
           cd dbt_medallion
-          dbt test --project-dir . --profiles-dir ~/.dbt --select state:modified+ --state ../main_branch_code/prod-run-artifacts
+          dbt test --project-dir . --profiles-dir ~/.dbt --select state:modified+ --state ../main_branch_code/dbt_medallion/prod-run-artifacts
 
       - name: Notify on failure
         if: failure()
