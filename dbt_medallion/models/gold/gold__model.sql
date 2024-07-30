@@ -5,3 +5,4 @@ WITH _data AS (
         {{ ref('silver__sales') }}
 )
 select * from _data
+
