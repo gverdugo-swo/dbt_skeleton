@@ -1,0 +1,23 @@
+version: 2
+
+models:
+  - name: silver__sales
+    tests:
+      - unique:
+          column_name: row_id
+  - name: gold__monthly_orders_by_state
+    tests:
+      - unique:
+          column_name: "(month || '-' || country || '-' || state)"
+  - name: gold__monthly_orders
+    tests:
+      - unique:
+          column_name: month
+  - name: gold__monthly_product_sales
+    tests:
+      - unique:
+          column_name: "(month || '-' || product_id)"
+  - name: gold__monthly_sales
+    tests:
+      - unique:
+          column_name: month

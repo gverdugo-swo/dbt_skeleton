@@ -3,7 +3,6 @@ WITH all_sales AS (
         t.sales,
         t.order_date,
         t.product_id,
-        t.product_name
     FROM
         {{ ref('silver__sales') }} as t
 ),
@@ -14,7 +13,6 @@ monthly_product_sales AS (
             MONTH
         ) AS `month`,
         product_id,
-        product_name,
         SUM(sales) AS sales
     FROM
         all_sales
