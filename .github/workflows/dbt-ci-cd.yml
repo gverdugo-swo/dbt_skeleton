@@ -66,7 +66,7 @@ jobs:
       - name: Format SQL files with sqlfmt
         run: |
           sqlfmt $GITHUB_WORKSPACE/dbt_medallion/models/**/*.sql
-    
+          
       # Remover directorios innecesarios
       - name: Remove unwanted directories
         run: |
@@ -82,8 +82,3 @@ jobs:
           git add -A
           git diff-index --quiet HEAD || git commit -m "Apply sqlfmt formatting"
           git push origin HEAD:${{ github.head_ref }}
-
-      - name: Notify on failure
-        if: failure()
-        run: |
-          echo "Formatting or testing failed. Please check the logs and fix issues."
