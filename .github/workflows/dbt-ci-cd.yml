@@ -52,6 +52,7 @@ jobs:
       - name: Run modified dbt models
         run: |
           cd dbt_medallion
+          dbt compile
           dbt run --project-dir . --profiles-dir ~/.dbt --select state:modified+ --defer --state ../main_branch_code/prod-run-artifacts
 
       - name: Run modified dbt tests
