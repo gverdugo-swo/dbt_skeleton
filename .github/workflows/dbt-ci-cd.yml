@@ -1,3 +1,4 @@
+# Nombre y activación del workflow
 name: dbt CI with SQLFluff
 
 on:
@@ -25,45 +26,52 @@ jobs:
       - name: Install SQLFluff and dbt
         run: |
           pip install sqlfluff sqlfluff-templater-dbt
-          pip install dbt-core dbt-bigquery  # Adjust based on your dbt adapter
+          pip install dbt-core dbt-bigquery  # Ajusta según tu adaptador dbt
 
       - name: Set up dbt profiles
         run: |
           mkdir -p ~/.dbt
           cp dbt_medallion/.dbt/profiles.yml ~/.dbt/profiles.yml
 
+      # Generar manifest.json para la rama de PR
       - name: Generate manifest.json for state comparison in PR branch
         run: |
           cd $GITHUB_WORKSPACE/dbt_medallion
           dbt compile --target-path=$GITHUB_WORKSPACE/pr-run-artifacts
 
+      # Cambiar a la rama main para obtener el estado actual
       - name: Checkout main branch code for state
         uses: actions/checkout@v2
         with:
           ref: main
           path: main_branch_code
 
+      # Generar manifest.json para la rama main
       - name: Generate manifest.json for state comparison in main
         run: |
           cd $GITHUB_WORKSPACE/main_branch_code/dbt_medallion
           dbt compile --target-path=$GITHUB_WORKSPACE/main-run-artifacts
 
+      # Formatear SQL con SQLFluff
       - name: Format SQL with SQLFluff
         run: |
           sqlfluff fix $GITHUB_WORKSPACE/dbt_medallion/models/**/*.sql --dialect bigquery
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # Volver al proyecto de la rama de PR y ejecutar modelos modificados
       - name: Run modified dbt models
         run: |
           cd $GITHUB_WORKSPACE/dbt_medallion
           dbt run --project-dir . --profiles-dir ~/.dbt --select state:modified+ --defer --state $GITHUB_WORKSPACE/main-run-artifacts
 
+      # Ejecutar tests modificados en la rama de PR
       - name: Run modified dbt tests
         run: |
           cd $GITHUB_WORKSPACE/dbt_medallion
           dbt test --project-dir . --profiles-dir ~/.dbt --select state:modified+ --state $GITHUB_WORKSPACE/main-run-artifacts
 
+      # Notificar en caso de fallo
       - name: Notify on failure
         if: failure()
         run: |
