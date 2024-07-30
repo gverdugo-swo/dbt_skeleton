@@ -36,7 +36,7 @@ jobs:
       - name: Fix SQL with SQLFluff (optional)
         if: ${{ always() }}
         run: |
-          sqlfluff fix dbt_medallion/models/**/*.sql
+          sqlfluff fix dbt_medallion/models/**/*.sql --dialect bigquery
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

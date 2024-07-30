@@ -1,0 +1,8 @@
+[sqlfluff]
+dialect = bigquery  # Replace with your SQL dialect (e.g., postgres, redshift)
+templater = dbt
+
+[sqlfluff:templater:dbt]
+project_dir = .  
+profiles_dir = ./.dbt
+profile = default  # The dbt profile to use
