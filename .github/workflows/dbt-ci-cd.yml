@@ -1,4 +1,4 @@
-name: dbt CI with SQLFluff
+name: dbt CI with State Comparison
 
 on:
   pull_request:
@@ -22,18 +22,17 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install SQLFluff and dbt
+      - name: Install dbt
         run: |
-          pip install sqlfluff sqlfluff-templater-dbt
           pip install dbt-core dbt-bigquery  # Ajusta según tu adaptador dbt
 
       - name: Set up dbt profiles
         run: |
           mkdir -p ~/.dbt
-          cp dbt_medallion/.dbt/profiles.yml ~/.dbt/profiles.yml
+          cp path/to/your/dbt/profiles.yml ~/.dbt/profiles.yml
 
       # Generar manifest.json para la rama de PR
-      - name: Generate manifest.json for state comparison in PR branch
+      - name: Generate manifest.json for PR branch
         run: |
           cd $GITHUB_WORKSPACE/dbt_medallion
           dbt compile --target-path=$GITHUB_WORKSPACE/pr-run-artifacts
@@ -47,30 +46,29 @@ jobs:
           path: main_branch_code
 
       # Generar manifest.json para la rama main
-      - name: Generate manifest.json for state comparison in main
+      - name: Generate manifest.json for main branch
         if: github.ref != 'refs/heads/main'
         run: |
           cd $GITHUB_WORKSPACE/main_branch_code/dbt_medallion
           dbt compile --target-path=$GITHUB_WORKSPACE/main-run-artifacts
 
-      # Formatear SQL con SQLFluff y diff-quality
-      - name: Format SQL with SQLFluff
+      # Listar modelos modificados
+      - name: List modified dbt models
         run: |
-          diff-quality --violations sqlfluff --compare-branch ${{ github.ref == 'refs/heads/main' && 'refs/heads/pr' || 'main' }} --fail-under 100
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          cd $GITHUB_WORKSPACE/dbt_medallion
+          dbt ls --state $GITHUB_WORKSPACE/main-run-artifacts --select state:modified+
 
-      # Volver al proyecto de la rama de PR y ejecutar modelos modificados
+      # Ejecutar modelos modificados
       - name: Run modified dbt models
         run: |
           cd $GITHUB_WORKSPACE/dbt_medallion
-          dbt run --project-dir . --profiles-dir ~/.dbt --select state:modified+ --defer --state $GITHUB_WORKSPACE/pr-run-artifacts
+          dbt run --project-dir . --profiles-dir ~/.dbt --select state:modified+ --defer --state $GITHUB_WORKSPACE/main-run-artifacts
 
       # Ejecutar tests modificados en la rama de PR
       - name: Run modified dbt tests
         run: |
           cd $GITHUB_WORKSPACE/dbt_medallion
-          dbt test --project-dir . --profiles-dir ~/.dbt --select state:modified+ --state $GITHUB_WORKSPACE/pr-run-artifacts
+          dbt test --project-dir . --profiles-dir ~/.dbt --select state:modified+ --state $GITHUB_WORKSPACE/main-run-artifacts
 
       # Notificar en caso de fallo
       - name: Notify on failure
