@@ -29,7 +29,7 @@ jobs:
       - name: Set up dbt profiles
         run: |
           mkdir -p ~/.dbt
-          cp path/to/your/dbt/profiles.yml ~/.dbt/profiles.yml
+          cp dbt_medallion/.dbt/profiles.yml ~/.dbt/profiles.yml
 
       # Generar manifest.json para la rama de PR
       - name: Generate manifest.json for PR branch
