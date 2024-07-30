@@ -1,32 +1,12 @@
-WITH all_sales AS (
-    SELECT
-        t.sales,
-        t.order_date,
-        t.product_id,
-    FROM
-        {{ ref('silver__sales') }} AS t
-),
-monthly_product_sales AS (
-    SELECT
-        DATE_TRUNC(
-            order_date,
-            MONTH
-        ) AS `month`,
-        product_id,
-        SUM(sales) AS sales
-    FROM
-        all_sales
-    GROUP BY
-        ALL
-),
-FINAL AS (
-    SELECT
-        *
-    FROM
-        monthly_product_sales
-)
-SELECT
-    *
-FROM
-    FINAL
-
+with
+    all_sales as (
+        select t.sales, t.order_date, t.product_id, from {{ ref("silver__sales") }} as t
+    ),
+    monthly_product_sales as (
+        select date_trunc(order_date, month) as `month`, product_id, sum(sales) as sales
+        from all_sales
+        group by all
+    ),
+    final as (select * from monthly_product_sales)
+select *
+from final
