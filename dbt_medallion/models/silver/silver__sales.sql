@@ -14,3 +14,4 @@ with cleaning_view as (
     select * from fields_view
 )
 select * from final
+

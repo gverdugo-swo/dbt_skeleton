@@ -1,4 +1,4 @@
-name: dbt CI with State Comparison and SQLFluff
+name: dbt CI with State Comparison and sqlfmt
 
 on:
   pull_request:
@@ -23,10 +23,10 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install dbt and SQLFluff
+      - name: Install dbt and sqlfmt
         run: |
           pip install dbt-core dbt-bigquery  # Ajusta según tu adaptador dbt
-          pip install sqlfluff sqlfluff-templater-dbt
+          pip install 'shandy-sqlfmt[jinjafmt]'
 
       - name: Set up dbt profiles
         run: |
@@ -52,8 +52,6 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE/main_branch_code/dbt_medallion
           dbt compile --target-path=$GITHUB_WORKSPACE/main-run-artifacts
-
-
           
       # Ejecutar modelos modificados
       - name: Run modified dbt models
@@ -66,10 +64,14 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE/dbt_medallion
           dbt test --project-dir . --profiles-dir ~/.dbt --select state:modified+ --state $GITHUB_WORKSPACE/main-run-artifacts
-      # Formatear archivos SQL
-      - name: Format SQL files with SQLFluff
+
+      # Formatear archivos SQL con sqlfmt
+      - name: Format SQL files with sqlfmt
         run: |
-          sqlfluff fix dbt_medallion/models/**/*.sql --force
+          for file in $(find dbt_medallion/models -name "*.sql"); do
+            sqlfmt "$file" > formatted.sql && mv formatted.sql "$file"
+          done
+
       # Notificar en caso de fallo
       - name: Notify on failure
         if: failure()
