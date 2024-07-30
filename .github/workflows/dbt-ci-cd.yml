@@ -12,7 +12,7 @@ jobs:
   lint_and_test:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout code from PR branch
         uses: actions/checkout@v2
         with:
           ref: ${{ github.event.pull_request.head.sha }}
@@ -26,17 +26,11 @@ jobs:
         run: |
           pip install sqlfluff sqlfluff-templater-dbt
           pip install dbt-core dbt-bigquery  # Adjust this line based on your dbt adapter
-      
+
       - name: Set up dbt profiles
         run: |
           mkdir -p ~/.dbt
           cp dbt_medallion/.dbt/profiles.yml ~/.dbt/profiles.yml
-
-      - name: Format SQL with SQLFluff
-        run: |
-          sqlfluff fix dbt_medallion/models/**/*.sql --dialect bigquery
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Checkout main branch code for state
         uses: actions/checkout@v2
@@ -44,15 +38,26 @@ jobs:
           ref: main
           path: main_branch_code
 
+      - name: Generate manifest.json for state comparison
+        run: |
+          cd main_branch_code/dbt_medallion
+          dbt compile --target-path prod-run-artifacts
+
+      - name: Format SQL with SQLFluff
+        run: |
+          sqlfluff fix dbt_medallion/models/**/*.sql --dialect bigquery
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Run modified dbt models
         run: |
           cd dbt_medallion
-          dbt run --project-dir . --profiles-dir ~/.dbt --select state:modified+ --defer --state ../main_branch_code/dbt_medallion/target
+          dbt run --project-dir . --profiles-dir ~/.dbt --select state:modified+ --defer --state ../main_branch_code/prod-run-artifacts
 
       - name: Run modified dbt tests
         run: |
           cd dbt_medallion
-          dbt test --project-dir . --profiles-dir ~/.dbt --select state:modified+ --state ../main_branch_code/dbt_medallion/target
+          dbt test --project-dir . --profiles-dir ~/.dbt --select state:modified+ --state ../main_branch_code/prod-run-artifacts
 
       - name: Notify on failure
         if: failure()
