@@ -3,7 +3,7 @@ WITH all_sales AS (
         t.sales,
         t.order_date
     FROM
-        {{ ref("silver__sales") }} as t
+        {{ ref("silver__sales") }} AS t
 ),
 monthly_sales AS (
     SELECT

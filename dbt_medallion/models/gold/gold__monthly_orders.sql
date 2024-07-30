@@ -9,7 +9,7 @@ monthly_orders AS (
     SELECT
         DATE_TRUNC(
             order_date,
-            month
+            MONTH
         ) AS `month`,
         COUNT(order_id) AS orders
     FROM
