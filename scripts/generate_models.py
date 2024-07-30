@@ -8,7 +8,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from common.dbt import ModelGenerator
 from common.google.drive import GoogleDriveService, GoogleSheetsClient
-from common.templates.dbt import CONFIG, DDP_QUERY
+from common.dbt.templates import CONFIG, DDP_QUERY
 
 # Load environment variables from a .env file
 load_dotenv()
