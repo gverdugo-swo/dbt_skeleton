@@ -55,7 +55,7 @@ jobs:
       # Formatear SQL con SQLFluff
       - name: Format SQL with SQLFluff
         run: |
-          diff-quality --violations sqlfluff --compare-branch origin/master --fail-under 100
+          diff-quality --violations sqlfluff --compare-branch origin/main --fail-under 100
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
