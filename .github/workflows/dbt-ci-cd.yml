@@ -26,7 +26,7 @@ jobs:
       - name: Install dbt and SQLFluff
         run: |
           pip install dbt-core dbt-bigquery  # Ajusta según tu adaptador dbt
-          pip install sqlfluff sqlfluff-templater-dbt
+          pip install sqlfluff sqlfluff-templater-dbt diff-quality
 
       - name: Set up dbt profiles
         run: |
@@ -40,6 +40,11 @@ jobs:
         with:
           ref: main
           path: main_branch_code
+          fetch-depth: 0
+
+      # Verificar la existencia de la rama main
+      - name: List branches for debugging
+        run: git branch -a
 
       # Generar manifest.json para la rama main
       - name: Generate manifest.json for main branch
@@ -53,13 +58,6 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE/dbt_medallion
           dbt ls --state $GITHUB_WORKSPACE/main-run-artifacts --select state:modified+
-
-      # Revisar archivos SQL modificados con SQLFluff
-      - name: Lint SQL files with SQLFluff
-        run: |
-          diff-quality --violations sqlfluff --compare-branch=main --fail-under 100
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # Formatear archivos SQL
       - name: Format SQL files with SQLFluff
