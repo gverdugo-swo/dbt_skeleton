@@ -82,3 +82,8 @@ jobs:
           git add -A
           git diff-index --quiet HEAD || git commit -m "Apply sqlfmt formatting"
           git push origin HEAD:${{ github.head_ref }}
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "Formatting or testing failed. Please check the logs and fix issues."
