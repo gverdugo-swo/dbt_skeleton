@@ -8,6 +8,7 @@ on:
 jobs:
   lint_and_test:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code from PR branch
         uses: actions/checkout@v2
@@ -62,10 +63,21 @@ jobs:
           cd $GITHUB_WORKSPACE/dbt_medallion
           dbt test --project-dir . --profiles-dir ~/.dbt --select state:modified+ --state $GITHUB_WORKSPACE/main-run-artifacts
 
+      # Fetch modified SQL files using trilom/file-changes-action
+      - name: Fetch modified SQL files
+        uses: trilom/file-changes-action@v1.2.4
+        id: files_changed
+        with:
+          output: ' '
+      
       # Formatear archivos SQL con sqlfmt
       - name: Format SQL files with sqlfmt
         run: |
-          sqlfmt $GITHUB_WORKSPACE/dbt_medallion/models/**/*.sql
+          for file in ${{ steps.files_changed.outputs.files_modified }}; do
+            if [[ "$file" == *.sql ]]; then
+              sqlfmt "$file"
+            fi
+          done
 
       # Remover el directorio main_branch_code del índice
       - name: Remove main_branch_code from index
