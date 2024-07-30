@@ -26,7 +26,7 @@ jobs:
       - name: Install dbt and sqlfmt
         run: |
           pip install dbt-core dbt-bigquery  # Ajusta según tu adaptador dbt
-          pip install 'shandy-sqlfmt[jinjafmt]'
+          pip install sqlfmt
 
       - name: Set up dbt profiles
         run: |
@@ -68,7 +68,9 @@ jobs:
       # Formatear archivos SQL con sqlfmt
       - name: Format SQL files with sqlfmt
         run: |
-          find dbt_medallion/models -name "*.sql" | xargs sqlfmt -i
+          for file in $(find dbt_medallion/models -name "*.sql"); do
+            sqlfmt "$file" > formatted.sql && mv formatted.sql "$file"
+          done
 
       # Notificar en caso de fallo
       - name: Notify on failure
