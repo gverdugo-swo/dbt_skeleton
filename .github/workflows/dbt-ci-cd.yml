@@ -55,7 +55,7 @@ jobs:
       # Formatear SQL con SQLFluff
       - name: Format SQL with SQLFluff
         run: |
-          sqlfluff fix $GITHUB_WORKSPACE/dbt_medallion/models/**/*.sql --dialect bigquery
+          diff-quality --violations sqlfluff --compare-branch origin/master --fail-under 100
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -63,13 +63,13 @@ jobs:
       - name: Run modified dbt models
         run: |
           cd $GITHUB_WORKSPACE/dbt_medallion
-          dbt run --project-dir . --profiles-dir ~/.dbt --select state:modified+ --defer --state $GITHUB_WORKSPACE/main-run-artifacts
+          dbt run --project-dir . --profiles-dir ~/.dbt --select state:modified+ --defer --state $GITHUB_WORKSPACE/main-run-artifacts/manifest.json
 
       # Ejecutar tests modificados en la rama de PR
       - name: Run modified dbt tests
         run: |
           cd $GITHUB_WORKSPACE/dbt_medallion
-          dbt test --project-dir . --profiles-dir ~/.dbt --select state:modified+ --state $GITHUB_WORKSPACE/main-run-artifacts
+          dbt test --project-dir . --profiles-dir ~/.dbt --select state:modified+ --state $GITHUB_WORKSPACE/main-run-artifacts/manifest.json
 
       # Notificar en caso de fallo
       - name: Notify on failure
