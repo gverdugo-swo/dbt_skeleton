@@ -17,14 +17,13 @@ monthly_sales AS (
     GROUP BY
         ALL
 ),
-FINAL AS (
-    SELECT
-        *
-    FROM
-        monthly_sales
-)
-SELECT
-    *
-FROM
-    FINAL
-
+            FINAL AS (
+                SELECT
+                    *
+                FROM
+                    monthly_sales
+            )
+            SELECT
+                *
+            FROM
+                FINAL

@@ -1,17 +1,16 @@
+{{ config(
+    tags = ['full-materialization','sales','auto-generated']
+) }}
 
-{{
-config(
-    tags=['full-materialization','sales','auto-generated']
+WITH cleaning_view AS ({{ get_cleaning_query("sales") }}),
+fields_view AS ({{ get_fields_query("sales") }}),
+FINAL AS(
+    SELECT
+        *
+    FROM
+        fields_view
 )
-}}
-
-
-with cleaning_view as (
-    {{ get_cleaning_query("sales") }}
-), fields_view as (
-    {{ get_fields_query("sales") }}
-), final as(
-    select * from fields_view
-)
-select * from final
-
+SELECT
+    *
+FROM
+    FINAL
