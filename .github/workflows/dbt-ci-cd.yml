@@ -1,4 +1,4 @@
-name: dbt CI with State Comparison
+name: dbt CI with State Comparison and SQLFluff
 
 on:
   pull_request:
@@ -22,20 +22,15 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install dbt
+      - name: Install dbt and SQLFluff
         run: |
           pip install dbt-core dbt-bigquery  # Ajusta según tu adaptador dbt
+          pip install sqlfluff sqlfluff-templater-dbt diff-quality
 
       - name: Set up dbt profiles
         run: |
           mkdir -p ~/.dbt
           cp dbt_medallion/.dbt/profiles.yml ~/.dbt/profiles.yml
-
-      # Generar manifest.json para la rama de PR
-      - name: Generate manifest.json for PR branch
-        run: |
-          cd $GITHUB_WORKSPACE/dbt_medallion
-          dbt compile --target-path=$GITHUB_WORKSPACE/pr-run-artifacts
 
       # Cambiar a la rama main para obtener el estado actual
       - name: Checkout main branch code for state
@@ -58,6 +53,18 @@ jobs:
           cd $GITHUB_WORKSPACE/dbt_medallion
           dbt ls --state $GITHUB_WORKSPACE/main-run-artifacts --select state:modified+
 
+      # Revisar archivos SQL modificados con SQLFluff
+      - name: Lint SQL files with SQLFluff
+        run: |
+          diff-quality --violations sqlfluff --compare-branch=main --fail-under 100
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Formatear archivos SQL
+      - name: Format SQL files with SQLFluff
+        run: |
+          sqlfluff fix dbt_medallion/models/**/*.sql --force
+          
       # Ejecutar modelos modificados
       - name: Run modified dbt models
         run: |
