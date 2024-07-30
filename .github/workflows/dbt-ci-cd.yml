@@ -26,6 +26,11 @@ jobs:
         run: |
           pip install sqlfluff sqlfluff-templater-dbt
           pip install dbt-core dbt-bigquery  # Adjust this line based on your dbt adapter
+      
+      - name: Set up dbt profiles
+        run: |
+          mkdir -p ~/.dbt
+          cp dbt_medallion/.dbt/profiles.yml ~/.dbt/profiles.yml
 
       - name: Lint SQL with SQLFluff
         run: |
