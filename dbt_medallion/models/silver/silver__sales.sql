@@ -1,6 +1,6 @@
 {{
 config(
-    tags=['auto-generated','sales','full-materialization']
+    tags=['sales','full-materialization','auto-generated']
 )
 }}
 
