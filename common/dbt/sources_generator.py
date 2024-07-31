@@ -129,7 +129,7 @@ class SourcesGenerator:
         bronze_source = {
             "name": "bronze",
             "description": "Dataset bronze in BigQuery.",
-            "database": os.getenv("GCP_PROJECT_ID"),
+            "database": os.getenv("GCP_PROJECT_ID", "ip-trabajo-gverdugo"),
             "schema": "bronze",
             "tables": list(sources_data.values()),
         }

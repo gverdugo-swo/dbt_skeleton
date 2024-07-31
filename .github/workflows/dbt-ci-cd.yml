@@ -20,15 +20,23 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install dbt and sqlfmt
+      - name: Install dependencies
         run: |
-          pip install dbt-core dbt-bigquery  # Ajusta según tu adaptador dbt
-          pip install 'shandy-sqlfmt[jinjafmt]'
+          pip install -r requirements.txt
 
       - name: Set up dbt profiles
         run: |
           mkdir -p ~/.dbt
           cp dbt_medallion/.dbt/profiles.yml ~/.dbt/profiles.yml
+
+      # Ejecutar scripts de generación de modelos y fuentes
+      - name: Generate models
+        run: |
+          python scripts/generate_models.py
+
+      - name: Generate sources
+        run: |
+          python scripts/generate_sources_yml.py
 
       # Cambiar a la rama main para obtener el estado actual
       - name: Checkout main branch code for state
@@ -50,6 +58,13 @@ jobs:
           cd $GITHUB_WORKSPACE/main_branch_code/dbt_medallion
           dbt compile --target-path=$GITHUB_WORKSPACE/main-run-artifacts
 
+      # Formatear archivos SQL con sqlfmt
+      - name: Format SQL files with sqlfmt
+        run: |
+          sqlfmt $GITHUB_WORKSPACE/dbt_medallion/models/**/*.sql
+          
+
+
       # Ejecutar modelos modificados
       - name: Run modified dbt models
         run: |
@@ -62,18 +77,13 @@ jobs:
           cd $GITHUB_WORKSPACE/dbt_medallion
           dbt test --project-dir . --profiles-dir ~/.dbt --select state:modified+ --state $GITHUB_WORKSPACE/main-run-artifacts
 
-      # Formatear archivos SQL con sqlfmt
-      - name: Format SQL files with sqlfmt
-        run: |
-          sqlfmt $GITHUB_WORKSPACE/dbt_medallion/models/**/*.sql
-          
-      # Remover directorios innecesarios
+        # Remover directorios innecesarios
       - name: Remove unwanted directories
         run: |
           rm -rf $GITHUB_WORKSPACE/main-run-artifacts
           rm -rf $GITHUB_WORKSPACE/main_branch_code
-      
-      # Comprobar si hay cambios y realizar commit y push si los hay
+
+        # Comprobar si hay cambios y realizar commit y push si los hay
       - name: Check for changes and commit
         run: |
           git config --global user.name "GitHub Actions"

@@ -21,14 +21,17 @@ logging.basicConfig(
 
 def main():
     # Path to your credentials JSON file
-    CREDENTIALS_JSON_PATH = os.getenv("CREDENTIALS_PATH")
+    CREDENTIALS_JSON_PATH = os.getenv(
+        "CREDENTIALS_PATH", "./dbt_medallion/dbt_runner.json"
+    )
 
     # Google Sheets details
-    SPREADSHEET_ID = os.getenv("CONFIG_SPREADSHEET_ID")
-    TABLES_RANGE = os.getenv("TABLE_INFO_RANGE")
-    FIELDS_RANGE = os.getenv("FIELD_INFO_RANGE")
-    DBT_PROJECT_FOLDER = os.getenv("DBT_PROJECT_FOLDER")
-
+    SPREADSHEET_ID = os.getenv(
+        "CONFIG_SPREADSHEET_ID", "1JvKh3nY7bFPKLc5Mt2_NwTj1M3fnM9Qac2VgEnMgeGY"
+    )
+    TABLES_RANGE = os.getenv("TABLE_INFO_RANGE", "TABLE_INFO")
+    FIELDS_RANGE = os.getenv("FIELD_INFO_RANGE", "FIELD_INFO")
+    DBT_PROJECT_FOLDER = os.getenv("DBT_PROJECT_FOLDER", "./dbt_medallion")
 
     # Output path for sources.yml
     OUTPUT_PATH = f"{DBT_PROJECT_FOLDER}/models/sources.yml"
