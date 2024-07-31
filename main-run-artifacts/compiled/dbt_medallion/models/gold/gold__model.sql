@@ -1,0 +1,1 @@
+with _data as (select * from `ip-trabajo-gverdugo`.`silver`.`sales`) select * from _data
