@@ -7,8 +7,8 @@ from dotenv import load_dotenv
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from common.dbt import ModelGenerator
-from common.google.drive import GoogleDriveService, GoogleSheetsClient
 from common.dbt.templates import CONFIG, DDP_QUERY
+from common.google.drive import GoogleDriveService, GoogleSheetsClient
 
 # Load environment variables from a .env file
 load_dotenv()
@@ -21,12 +21,16 @@ logging.basicConfig(
 
 def main():
     # Path to your credentials JSON file
-    CREDENTIALS_JSON_PATH = os.getenv("CREDENTIALS_PATH")
+    CREDENTIALS_JSON_PATH = os.getenv(
+        "CREDENTIALS_PATH", "./dbt_medallion/dbt_runner.json"
+    )
 
     # Google Sheets details
-    SPREADSHEET_ID = os.getenv("CONFIG_SPREADSHEET_ID")
-    RANGE_NAME = os.getenv("TABLE_INFO_RANGE")
-    DBT_PROJECT_FOLDER = os.getenv("DBT_PROJECT_FOLDER")
+    SPREADSHEET_ID = os.getenv(
+        "CONFIG_SPREADSHEET_ID", "1JvKh3nY7bFPKLc5Mt2_NwTj1M3fnM9Qac2VgEnMgeGY"
+    )
+    RANGE_NAME = os.getenv("TABLE_INFO_RANGE", "TABLE_INFO")
+    DBT_PROJECT_FOLDER = os.getenv("DBT_PROJECT_FOLDER", "./dbt_medallion")
 
     # Output directory for generated models
     OUTPUT_DIR = f"{DBT_PROJECT_FOLDER}/models/silver/"

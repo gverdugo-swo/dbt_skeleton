@@ -30,6 +30,15 @@ jobs:
           mkdir -p ~/.dbt
           cp dbt_medallion/.dbt/profiles.yml ~/.dbt/profiles.yml
 
+      # Ejecutar scripts de generación de modelos y fuentes
+      - name: Generate models
+        run: |
+          python ./scripts/generate_models.py
+
+      - name: Generate sources
+        run: |
+          python ./scripts/generate_sources.py
+
       # Cambiar a la rama main para obtener el estado actual
       - name: Checkout main branch code for state
         if: github.ref != 'refs/heads/main'
