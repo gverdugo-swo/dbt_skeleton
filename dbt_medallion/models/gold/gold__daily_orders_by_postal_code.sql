@@ -1,20 +1,9 @@
-WITH orders AS (
-    SELECT
-        order_date AS `day`,
-        postal_code,
-        COUNT(*) AS orders
-    FROM
-        {{ ref("silver__sales") }}
-    GROUP BY
-        ALL
-),
-FINAL AS (
-    SELECT
-        *
-    FROM
-        orders
-)
-SELECT
-    *
-FROM
-    FINAL
+with
+    orders as (
+        select order_date as `day`, postal_code, count(*) as orders
+        from {{ ref("silver__sales") }}
+        group by all
+    ),
+    final as (select * from orders)
+select *
+from final
