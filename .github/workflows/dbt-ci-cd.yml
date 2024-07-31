@@ -63,11 +63,7 @@ jobs:
         run: |
           sqlfmt $GITHUB_WORKSPACE/dbt_medallion/models/**/*.sql
           
-      # Remover directorios innecesarios
-      - name: Remove unwanted directories
-        run: |
-          rm -rf $GITHUB_WORKSPACE/main-run-artifacts
-          rm -rf $GITHUB_WORKSPACE/main_branch_code
+
       
       # Comprobar si hay cambios y realizar commit y push si los hay
       - name: Check for changes and commit
@@ -79,7 +75,7 @@ jobs:
           git diff-index --quiet HEAD || git commit -m "Apply sqlfmt formatting"
           git push origin HEAD:${{ github.head_ref }}
 
-        # Ejecutar modelos modificados
+      # Ejecutar modelos modificados
       - name: Run modified dbt models
         run: |
           cd $GITHUB_WORKSPACE/dbt_medallion
@@ -90,3 +86,9 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE/dbt_medallion
           dbt test --project-dir . --profiles-dir ~/.dbt --select state:modified+ --state $GITHUB_WORKSPACE/main-run-artifacts
+
+            # Remover directorios innecesarios
+      - name: Remove unwanted directories
+        run: |
+          rm -rf $GITHUB_WORKSPACE/main-run-artifacts
+          rm -rf $GITHUB_WORKSPACE/main_branch_code
