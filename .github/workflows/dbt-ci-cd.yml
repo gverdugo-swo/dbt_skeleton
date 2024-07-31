@@ -58,18 +58,6 @@ jobs:
           cd $GITHUB_WORKSPACE/main_branch_code/dbt_medallion
           dbt compile --target-path=$GITHUB_WORKSPACE/main-run-artifacts
 
-      # Ejecutar modelos modificados
-      - name: Run modified dbt models
-        run: |
-          cd $GITHUB_WORKSPACE/dbt_medallion
-          dbt run --project-dir . --profiles-dir ~/.dbt --select state:modified+ --defer --state $GITHUB_WORKSPACE/main-run-artifacts
-
-      # Ejecutar tests modificados en la rama de PR
-      - name: Run modified dbt tests
-        run: |
-          cd $GITHUB_WORKSPACE/dbt_medallion
-          dbt test --project-dir . --profiles-dir ~/.dbt --select state:modified+ --state $GITHUB_WORKSPACE/main-run-artifacts
-
       # Formatear archivos SQL con sqlfmt
       - name: Format SQL files with sqlfmt
         run: |
@@ -90,3 +78,15 @@ jobs:
           git add -A
           git diff-index --quiet HEAD || git commit -m "Apply sqlfmt formatting"
           git push origin HEAD:${{ github.head_ref }}
+
+        # Ejecutar modelos modificados
+      - name: Run modified dbt models
+        run: |
+          cd $GITHUB_WORKSPACE/dbt_medallion
+          dbt run --project-dir . --profiles-dir ~/.dbt --select state:modified+ --defer --state $GITHUB_WORKSPACE/main-run-artifacts
+
+      # Ejecutar tests modificados en la rama de PR
+      - name: Run modified dbt tests
+        run: |
+          cd $GITHUB_WORKSPACE/dbt_medallion
+          dbt test --project-dir . --profiles-dir ~/.dbt --select state:modified+ --state $GITHUB_WORKSPACE/main-run-artifacts
