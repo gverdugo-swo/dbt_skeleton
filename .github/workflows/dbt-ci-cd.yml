@@ -32,11 +32,11 @@ jobs:
       # Ejecutar scripts de generación de modelos y fuentes
       - name: Generate models
         run: |
-          python ./scripts/generate_models.py
+          python scripts/generate_models.py
 
       - name: Generate sources
         run: |
-          python ./scripts/generate_sources.py
+          python scripts/generate_sources.py
 
       # Cambiar a la rama main para obtener el estado actual
       - name: Checkout main branch code for state
