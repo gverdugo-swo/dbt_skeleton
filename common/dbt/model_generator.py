@@ -133,7 +133,7 @@ class ModelGenerator:
             additional_tags (str): A comma-separated string of additional tags.
 
         Returns:
-            str: A comma-separated string of combined tags.
+            str: A comma-separated string of combined and sorted tags.
         """
         # Extract existing tags from config
         start = config.find("tags=[") + len("tags=[")
@@ -146,8 +146,9 @@ class ModelGenerator:
         else:
             new_tags = set()
 
-        # Combine the two sets of tags
-        combined_tags = existing_tags.union(new_tags)
+        # Combine and sort the two sets of tags
+        combined_tags = sorted(existing_tags.union(new_tags))
 
         # Return combined tags as a formatted string
         return ",".join(f"'{tag}'" for tag in combined_tags if tag)
+
