@@ -36,7 +36,7 @@ jobs:
 
       - name: Generate sources
         run: |
-          python scripts/generate_sources.py
+          python scripts/generate_sources_yml.py
 
       # Cambiar a la rama main para obtener el estado actual
       - name: Checkout main branch code for state
