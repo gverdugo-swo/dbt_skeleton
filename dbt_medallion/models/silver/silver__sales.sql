@@ -1,4 +1,9 @@
-{{ config(tags=["full-materialization", "sales", "auto-generated"]) }}
+{{
+config(
+    tags=['sales','auto-generated','full-materialization']
+)
+}}
+
 
 with
     cleaning_view as ({{ get_cleaning_query("sales") }}),

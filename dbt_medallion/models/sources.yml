@@ -2,7 +2,7 @@ version: 2
 sources:
 - name: bronze
   description: Dataset bronze in BigQuery.
-  database: ip-trabajo-gverdugo
+  database: null
   schema: bronze
   tables:
   - name: sales
